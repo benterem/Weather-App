@@ -1,6 +1,6 @@
 // code for API 
 
-const key = '';
+const key = 'RQKXts2GYcogSSwxAmz4nKARaGnRgo3K';
 
 const getCity = async (city) => {
 
@@ -10,7 +10,9 @@ const getCity = async (city) => {
     const response = await fetch(base+query);
     const data = await response.json();
 
-    console.log(data);
+    return data[0];
 };
 
-getCity('miami');
+getCity('miami')
+    .then(data => console.log(data))
+    .catch(err => console.log(err));
