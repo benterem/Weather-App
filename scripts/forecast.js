@@ -1,39 +1,30 @@
 // code for API 
 
-const key = '';
+class Forecast{
 
-//get weather info
-const getWeather = async (id) => {
+    constructor(){
+        this.key = 'uKIwPuSXgPPZEfy0TGjEQfhx3S2cJJHn';
+        this.weatherURI = 'http://dataservice.accuweather.com/currentconditions/v1/';
+        this.cityURI = 'http://dataservice.accuweather.com/locations/v1/cities/search';
+    }
 
-    const base = 'http://dataservice.accuweather.com/currentconditions/v1/'
-    const query = `${id}?apikey=${key}`;
+    async updateCity(city){
+        const cityDets = await this.getCity(city);
+        const weather = await this.getWeather(cityDets.Key);   
+        return { cityDets, weather };
+    };
 
-    const response = await fetch(base+query);
-    const data = await response.json();
+    async getCity(city){ 
+        const query = `?apikey=${this.key}&q=${city}` // we add the api-key and the city queries
+        const response = await fetch(this.cityURI+query); // make the call (fetch returns a promise so we await)
+        const data = await response.json(); // (fetch returns a promise which itself returns a response 
+        return data[0];                     // object, we use fetch's json() method to get a JSON we can work with)
+    }
 
-    return data[0];
-};
-
-// get city info
-const getCity = async (city) => {
-
-    const base = 'http://dataservice.accuweather.com/locations/v1/cities/search'
-    const query = `?apikey=${key}&q=${city}`
-
-    const response = await fetch(base+query);
-    const data = await response.json();
-
-    return data[0];
-};
-
-
-
-
-getCity('miami').then(data => {
-    return getWeather(data.Key);
-}).then(data => {
-    console.log(data);
-})
-.catch(err => console.log(err));
-
-getWeather();
+    async getWeather(id) {
+        const query = `${id}?apikey=${this.key}`;
+        const response = await fetch(this.weatherURI + query);
+        const data = await response.json();
+        return data[0];
+    };
+}
